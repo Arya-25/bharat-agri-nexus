@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Menu, X, Leaf, Globe, Users, Calendar, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,14 +19,14 @@ export const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-green-100 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-2 rounded-lg">
               <Leaf className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
               AgriBusiness Pro
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -39,9 +40,18 @@ export const Navigation = () => {
                 <span>{item.name}</span>
               </a>
             ))}
-            <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-              Get Started
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Link to="/login">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700" size="sm">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -71,9 +81,18 @@ export const Navigation = () => {
                   <span>{item.name}</span>
                 </a>
               ))}
-              <Button className="w-full mt-2 bg-gradient-to-r from-green-600 to-emerald-600">
-                Get Started
-              </Button>
+              <div className="flex flex-col space-y-2 pt-4 border-t border-green-100">
+                <Link to="/login" onClick={() => setIsOpen(false)}>
+                  <Button variant="outline" className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/register" onClick={() => setIsOpen(false)}>
+                  <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         )}
