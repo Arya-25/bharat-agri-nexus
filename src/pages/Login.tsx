@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { login } = useUser();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,11 +24,40 @@ const Login = () => {
     // Simulate login process
     setTimeout(() => {
       setIsLoading(false);
+      
+      // Check if user exists in localStorage from registration
+      const existingUser = localStorage.getItem('user');
+      if (existingUser) {
+        const userData = JSON.parse(existingUser);
+        if (userData.email === email) {
+          login(userData);
+          toast({
+            title: "Login Successful",
+            description: "Welcome back to AgriBusiness Pro!",
+          });
+          navigate("/dashboard");
+          return;
+        }
+      }
+
+      // For demo purposes, create a default user if no registered user found
+      const defaultUser = {
+        firstName: "Demo",
+        lastName: "User",
+        email: email,
+        phone: "+91 9876543210",
+        organization: "Sample Organization",
+        userType: "farmer",
+        location: "Maharashtra, India",
+        joinDate: "2024-01-15",
+        bio: "Demo user account for testing purposes.",
+      };
+
+      login(defaultUser);
       toast({
         title: "Login Successful",
         description: "Welcome back to AgriBusiness Pro!",
       });
-      // Redirect to dashboard after successful login
       navigate("/dashboard");
     }, 1500);
   };

@@ -10,8 +10,11 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { MarketPrices } from "@/components/dashboard/MarketPrices";
+import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
+  const { user } = useUser();
+  
   const userTags = [
     { name: "Verified Farmer", color: "bg-green-100 text-green-800" },
     { name: "Premium Member", color: "bg-purple-100 text-purple-800" },
@@ -25,6 +28,19 @@ const Dashboard = () => {
     { name: "Global Reach", icon: Globe, color: "text-blue-600" },
   ];
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+        <Navigation />
+        <div className="pt-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto text-center">
+            <h1 className="text-3xl font-bold text-gray-900">Please log in to view your dashboard</h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       <Navigation />
@@ -35,7 +51,7 @@ const Dashboard = () => {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Welcome back, John!</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.firstName}!</h1>
                 <p className="text-gray-600 mt-2">Here's what's happening with your AgriBusiness today.</p>
               </div>
               <div className="flex items-center space-x-3">

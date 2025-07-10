@@ -1,11 +1,12 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Leaf, Mail, Lock, User, Building2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +23,8 @@ const Register = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { login } = useUser();
+  const navigate = useNavigate();
 
   const userTypes = [
     { value: "farmer", label: "Farmer" },
@@ -56,10 +59,32 @@ const Register = () => {
     // Simulate registration process
     setTimeout(() => {
       setIsLoading(false);
+      
+      // Create user data object
+      const userData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        organization: formData.organization || "Independent",
+        userType: formData.userType,
+        location: "India", // Default location
+        joinDate: new Date().toISOString().split('T')[0],
+        bio: `${formData.userType === 'farmer' ? 'Passionate farmer' : 'Professional'} working in agriculture and committed to sustainable practices.`,
+      };
+
+      // Save user data and log them in
+      login(userData);
+
       toast({
         title: "Registration Successful",
-        description: "Welcome to AgriBusiness Pro! Please check your email for verification.",
+        description: "Welcome to AgriBusiness Pro! Redirecting to dashboard...",
       });
+
+      // Redirect to dashboard
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
     }, 2000);
   };
 

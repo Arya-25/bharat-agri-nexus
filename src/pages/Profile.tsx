@@ -8,21 +8,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Navigation } from "@/components/Navigation";
+import { useUser } from "@/contexts/UserContext";
 
 const Profile = () => {
+  const { user, setUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+91 9876543210",
-    organization: "Green Valley Farms",
-    userType: "farmer",
-    location: "Maharashtra, India",
-    joinDate: "2024-01-15",
-    bio: "Passionate farmer with 10+ years of experience in sustainable agriculture.",
+  const [editData, setEditData] = useState(user || {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    organization: "",
+    userType: "",
+    location: "",
+    joinDate: "",
+    bio: "",
   });
-  const [editData, setEditData] = useState(profileData);
   const { toast } = useToast();
 
   const userTypes = {
@@ -36,11 +37,15 @@ const Profile = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditData(profileData);
+    setEditData(user || editData);
   };
 
   const handleSave = () => {
-    setProfileData(editData);
+    if (user) {
+      const updatedUser = { ...user, ...editData };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
     setIsEditing(false);
     toast({
       title: "Profile Updated",
@@ -50,7 +55,7 @@ const Profile = () => {
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditData(profileData);
+    setEditData(user || editData);
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -59,6 +64,19 @@ const Profile = () => {
       [field]: value
     }));
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+        <Navigation />
+        <div className="pt-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-3xl font-bold text-gray-900">Please log in to view your profile</h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
@@ -114,7 +132,7 @@ const Profile = () => {
                           onChange={(e) => handleInputChange('firstName', e.target.value)}
                         />
                       ) : (
-                        <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded">{profileData.firstName}</p>
+                        <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded">{user.firstName}</p>
                       )}
                     </div>
 
@@ -127,7 +145,7 @@ const Profile = () => {
                           onChange={(e) => handleInputChange('lastName', e.target.value)}
                         />
                       ) : (
-                        <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded">{profileData.lastName}</p>
+                        <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded">{user.lastName}</p>
                       )}
                     </div>
 
@@ -135,7 +153,7 @@ const Profile = () => {
                       <Label htmlFor="email">Email</Label>
                       <div className="flex items-center space-x-2">
                         <Mail className="h-4 w-4 text-gray-400" />
-                        <p className="text-sm text-gray-700">{profileData.email}</p>
+                        <p className="text-sm text-gray-700">{user.email}</p>
                       </div>
                     </div>
 
@@ -153,7 +171,7 @@ const Profile = () => {
                       ) : (
                         <div className="flex items-center space-x-2">
                           <Phone className="h-4 w-4 text-gray-400" />
-                          <p className="text-sm text-gray-700">{profileData.phone}</p>
+                          <p className="text-sm text-gray-700">{user.phone}</p>
                         </div>
                       )}
                     </div>
@@ -172,7 +190,7 @@ const Profile = () => {
                       ) : (
                         <div className="flex items-center space-x-2">
                           <Building2 className="h-4 w-4 text-gray-400" />
-                          <p className="text-sm text-gray-700">{profileData.organization}</p>
+                          <p className="text-sm text-gray-700">{user.organization}</p>
                         </div>
                       )}
                     </div>
@@ -181,7 +199,7 @@ const Profile = () => {
                       <Label>User Type</Label>
                       <div className="flex items-center space-x-2">
                         <User className="h-4 w-4 text-gray-400" />
-                        <p className="text-sm text-gray-700">{userTypes[profileData.userType as keyof typeof userTypes]}</p>
+                        <p className="text-sm text-gray-700">{userTypes[user.userType as keyof typeof userTypes]}</p>
                       </div>
                     </div>
 
@@ -199,7 +217,7 @@ const Profile = () => {
                       ) : (
                         <div className="flex items-center space-x-2">
                           <MapPin className="h-4 w-4 text-gray-400" />
-                          <p className="text-sm text-gray-700">{profileData.location}</p>
+                          <p className="text-sm text-gray-700">{user.location}</p>
                         </div>
                       )}
                     </div>
@@ -208,7 +226,7 @@ const Profile = () => {
                       <Label>Member Since</Label>
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
-                        <p className="text-sm text-gray-700">{new Date(profileData.joinDate).toLocaleDateString()}</p>
+                        <p className="text-sm text-gray-700">{new Date(user.joinDate).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>
@@ -224,7 +242,7 @@ const Profile = () => {
                         rows={4}
                       />
                     ) : (
-                      <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded">{profileData.bio}</p>
+                      <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded">{user.bio}</p>
                     )}
                   </div>
                 </CardContent>
@@ -272,15 +290,8 @@ const Profile = () => {
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                       <div>
-                        <p className="text-sm font-medium">Registered for upcoming event</p>
-                        <p className="text-xs text-gray-500">1 day ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <div>
                         <p className="text-sm font-medium">Account created</p>
-                        <p className="text-xs text-gray-500">2 weeks ago</p>
+                        <p className="text-xs text-gray-500">{new Date(user.joinDate).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>
