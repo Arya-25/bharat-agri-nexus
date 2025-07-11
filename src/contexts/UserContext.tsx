@@ -25,147 +25,115 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// Mock users for testing
+const mockUsers = [
+  {
+    email: 'test@example.com',
+    password: 'password123',
+    firstName: 'John',
+    lastName: 'Doe',
+    phone: '1234567890',
+    organization: 'Test Farm',
+    userType: 'farmer',
+    location: 'India',
+    bio: 'Passionate farmer working in agriculture and committed to sustainable practices.'
+  }
+];
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const userData: UserData = {
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
-          email: data.user.email,
-          phone: data.user.phone,
-          organization: data.user.organization,
-          userType: data.user.userType,
-          location: data.user.location,
-          joinDate: data.user.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          bio: data.user.bio || '',
-        };
-        
-        setUser(userData);
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        return { success: true, message: data.message };
-      } else {
-        return { success: false, message: data.message || 'Login failed' };
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, message: 'Network error. Please try again.' };
+    // Mock login - simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const mockUser = mockUsers.find(u => u.email === email && u.password === password);
+    
+    if (mockUser) {
+      const userData: UserData = {
+        firstName: mockUser.firstName,
+        lastName: mockUser.lastName,
+        email: mockUser.email,
+        phone: mockUser.phone,
+        organization: mockUser.organization,
+        userType: mockUser.userType,
+        location: mockUser.location,
+        joinDate: new Date().toISOString().split('T')[0],
+        bio: mockUser.bio,
+      };
+      
+      setUser(userData);
+      localStorage.setItem('mockToken', 'mock-jwt-token');
+      localStorage.setItem('user', JSON.stringify(userData));
+      return { success: true, message: 'Login successful' };
+    } else {
+      return { success: false, message: 'Invalid email or password' };
     }
   };
 
   const register = async (userData: any) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const userInfo: UserData = {
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
-          email: data.user.email,
-          phone: data.user.phone,
-          organization: data.user.organization,
-          userType: data.user.userType,
-          location: data.user.location,
-          joinDate: data.user.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-          bio: data.user.bio || '',
-        };
-        
-        setUser(userInfo);
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(userInfo));
-        return { success: true, message: data.message };
-      } else {
-        return { success: false, message: data.message || 'Registration failed' };
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      return { success: false, message: 'Network error. Please try again.' };
+    // Mock registration - simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Check if user already exists
+    const existingUser = mockUsers.find(u => u.email === userData.email);
+    if (existingUser) {
+      return { success: false, message: 'User already exists with this email' };
     }
+    
+    // Create new mock user
+    const newUser = {
+      email: userData.email,
+      password: userData.password,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      phone: userData.phone,
+      organization: userData.organization,
+      userType: userData.userType,
+      location: userData.location,
+      bio: userData.bio
+    };
+    
+    mockUsers.push(newUser);
+    
+    const userInfo: UserData = {
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      phone: userData.phone,
+      organization: userData.organization,
+      userType: userData.userType,
+      location: userData.location,
+      joinDate: new Date().toISOString().split('T')[0],
+      bio: userData.bio,
+    };
+    
+    setUser(userInfo);
+    localStorage.setItem('mockToken', 'mock-jwt-token');
+    localStorage.setItem('user', JSON.stringify(userInfo));
+    return { success: true, message: 'Registration successful' };
   };
 
   const logout = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        await fetch(`${API_BASE_URL}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setUser(null);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-    }
+    setUser(null);
+    localStorage.removeItem('mockToken');
+    localStorage.removeItem('user');
   };
 
   // Check for existing user data on mount
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('mockToken');
       const storedUser = localStorage.getItem('user');
       
       if (token && storedUser) {
         try {
-          // Verify token with backend
-          const response = await fetch(`${API_BASE_URL}/auth/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            const userData: UserData = {
-              firstName: data.user.firstName,
-              lastName: data.user.lastName,
-              email: data.user.email,
-              phone: data.user.phone,
-              organization: data.user.organization,
-              userType: data.user.userType,
-              location: data.user.location,
-              joinDate: data.user.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
-              bio: data.user.bio || '',
-            };
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
-          } else {
-            // Token is invalid, clear storage
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          }
+          const userData = JSON.parse(storedUser);
+          setUser(userData);
         } catch (error) {
-          console.error('Auth check error:', error);
-          localStorage.removeItem('token');
+          console.error('Error parsing stored user data:', error);
+          localStorage.removeItem('mockToken');
           localStorage.removeItem('user');
         }
       }
