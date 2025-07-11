@@ -23,7 +23,7 @@ const Register = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { login } = useUser();
+  const { register } = useUser();
   const navigate = useNavigate();
 
   const userTypes = [
@@ -56,36 +56,45 @@ const Register = () => {
 
     setIsLoading(true);
 
-    // Simulate registration process
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // Create user data object
-      const userData = {
+    try {
+      const result = await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
         organization: formData.organization || "Independent",
         userType: formData.userType,
+        password: formData.password,
         location: "India", // Default location
-        joinDate: new Date().toISOString().split('T')[0],
         bio: `${formData.userType === 'farmer' ? 'Passionate farmer' : 'Professional'} working in agriculture and committed to sustainable practices.`,
-      };
-
-      // Save user data and log them in
-      login(userData);
-
-      toast({
-        title: "Registration Successful",
-        description: "Welcome to AgriBusiness Pro! Redirecting to dashboard...",
       });
 
-      // Redirect to dashboard
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
-    }, 2000);
+      if (result.success) {
+        toast({
+          title: "Registration Successful",
+          description: "Welcome to AgriBusiness Pro! Redirecting to dashboard...",
+        });
+
+        // Redirect to dashboard
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
+      } else {
+        toast({
+          title: "Registration Failed",
+          description: result.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
