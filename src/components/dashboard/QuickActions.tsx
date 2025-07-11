@@ -1,16 +1,56 @@
 
+import { Plus, Upload, MessageSquare, Calendar, FileText, Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageSquare, Calendar, FileText, Users, Settings } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const QuickActions = () => {
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: "Action Triggered",
+      description: `${action} functionality will be available soon!`,
+    });
+  };
+
   const actions = [
-    { icon: Plus, label: "New Order", color: "bg-green-600 hover:bg-green-700" },
-    { icon: MessageSquare, label: "Send Message", color: "bg-blue-600 hover:bg-blue-700" },
-    { icon: Calendar, label: "Schedule Event", color: "bg-purple-600 hover:bg-purple-700" },
-    { icon: FileText, label: "Create Report", color: "bg-orange-600 hover:bg-orange-700" },
-    { icon: Users, label: "Add Contact", color: "bg-teal-600 hover:bg-teal-700" },
-    { icon: Settings, label: "Settings", color: "bg-gray-600 hover:bg-gray-700" },
+    {
+      icon: Plus,
+      label: "New Product",
+      description: "Add a new product to your catalog",
+      action: () => handleAction("New Product"),
+    },
+    {
+      icon: Upload,
+      label: "Upload Images",
+      description: "Upload product images",
+      action: () => handleAction("Upload Images"),
+    },
+    {
+      icon: MessageSquare,
+      label: "Contact Support",
+      description: "Get help from our team",
+      action: () => handleAction("Contact Support"),
+    },
+    {
+      icon: Calendar,
+      label: "Schedule Meeting",
+      description: "Book a consultation",
+      action: () => handleAction("Schedule Meeting"),
+    },
+    {
+      icon: FileText,
+      label: "Generate Report",
+      description: "Create business reports",
+      action: () => handleAction("Generate Report"),
+    },
+    {
+      icon: Settings,
+      label: "Account Settings",
+      description: "Manage your preferences",
+      action: () => handleAction("Account Settings"),
+    },
   ];
 
   return (
@@ -18,19 +58,23 @@ export const QuickActions = () => {
       <CardHeader>
         <CardTitle>Quick Actions</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-3">
-          {actions.map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className={`flex flex-col items-center space-y-2 h-20 ${action.color} text-white border-none hover:text-white`}
-            >
-              <action.icon className="h-5 w-5" />
-              <span className="text-xs">{action.label}</span>
-            </Button>
-          ))}
-        </div>
+      <CardContent className="space-y-3">
+        {actions.map((action, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            className="w-full justify-start h-auto p-4"
+            onClick={action.action}
+          >
+            <div className="flex items-center space-x-3">
+              <action.icon className="h-5 w-5 text-green-600" />
+              <div className="text-left">
+                <div className="font-medium">{action.label}</div>
+                <div className="text-xs text-gray-500">{action.description}</div>
+              </div>
+            </div>
+          </Button>
+        ))}
       </CardContent>
     </Card>
   );

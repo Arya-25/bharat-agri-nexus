@@ -1,62 +1,109 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, MessageSquare, ShoppingCart, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export const RecentActivity = () => {
+  const { toast } = useToast();
+
   const activities = [
     {
-      icon: MessageSquare,
-      title: "New message from AgriCorp Ltd",
-      description: "Interested in your organic wheat supply",
+      id: 1,
+      type: "order",
+      title: "New order received",
+      description: "Order #12345 for Organic Wheat (50kg)",
       time: "2 hours ago",
-      color: "text-blue-600",
+      status: "pending",
     },
     {
-      icon: ShoppingCart,
-      title: "Order completed",
-      description: "500kg rice delivered to Mumbai FPO",
+      id: 2,
+      type: "payment",
+      title: "Payment received",
+      description: "₹15,000 from ABC Traders",
       time: "4 hours ago",
-      color: "text-green-600",
+      status: "completed",
     },
     {
-      icon: Users,
-      title: "New farmer joined network",
-      description: "Rajesh Kumar from Punjab",
+      id: 3,
+      type: "inquiry",
+      title: "Product inquiry",
+      description: "Inquiry about Basmati Rice pricing",
       time: "6 hours ago",
-      color: "text-purple-600",
+      status: "new",
     },
     {
-      icon: Activity,
-      title: "Market price update",
-      description: "Wheat prices increased by 5%",
-      time: "8 hours ago",
-      color: "text-orange-600",
+      id: 4,
+      type: "shipment",
+      title: "Shipment dispatched",
+      description: "Order #12340 shipped via truck",
+      time: "1 day ago",
+      status: "completed",
     },
   ];
+
+  const handleViewActivity = (activityId: number) => {
+    toast({
+      title: "Activity Details",
+      description: `Viewing details for activity #${activityId}`,
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "new":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Activity className="h-5 w-5" />
-          <span>Recent Activity</span>
-        </CardTitle>
+        <CardTitle>Recent Activity</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {activities.map((activity, index) => (
-            <div key={index} className="flex items-start space-x-3">
-              <div className={`p-2 rounded-full bg-gray-100 ${activity.color}`}>
-                <activity.icon className="h-4 w-4" />
+          {activities.map((activity) => (
+            <div
+              key={activity.id}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <div className="flex-1">
+                <div className="flex items-center space-x-3">
+                  <h4 className="font-medium text-gray-900">{activity.title}</h4>
+                  <Badge className={getStatusColor(activity.status)}>
+                    {activity.status}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600 mt-1">{activity.description}</p>
+                <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-                <p className="text-sm text-gray-500">{activity.description}</p>
-                <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleViewActivity(activity.id)}
+              >
+                View
+              </Button>
             </div>
           ))}
         </div>
+        <Button
+          variant="outline"
+          className="w-full mt-4"
+          onClick={() => toast({
+            title: "All Activities",
+            description: "Loading complete activity history...",
+          })}
+        >
+          View All Activities
+        </Button>
       </CardContent>
     </Card>
   );

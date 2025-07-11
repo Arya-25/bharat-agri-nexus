@@ -1,32 +1,54 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const UpcomingEvents = () => {
+  const { toast } = useToast();
+
   const events = [
     {
-      title: "AgriTech Summit 2024",
-      date: "March 15, 2024",
+      id: 1,
+      title: "Agricultural Trade Fair",
+      date: "2024-01-20",
       time: "10:00 AM",
-      location: "New Delhi",
-      type: "Conference",
+      location: "Mumbai Exhibition Center",
+      type: "trade-fair",
     },
     {
+      id: 2,
       title: "Organic Farming Workshop",
-      date: "March 20, 2024",
+      date: "2024-01-25",
       time: "2:00 PM",
-      location: "Pune",
-      type: "Workshop",
+      location: "Online Webinar",
+      type: "workshop",
     },
     {
-      title: "FPO Networking Event",
-      date: "March 25, 2024",
+      id: 3,
+      title: "Crop Insurance Seminar",
+      date: "2024-02-01",
       time: "11:00 AM",
-      location: "Mumbai",
-      type: "Networking",
+      location: "Delhi Convention Center",
+      type: "seminar",
     },
   ];
+
+  const handleJoinEvent = (eventId: number, eventTitle: string) => {
+    toast({
+      title: "Event Registration",
+      description: `Registered for "${eventTitle}" successfully!`,
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
   return (
     <Card>
@@ -38,16 +60,26 @@ export const UpcomingEvents = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {events.map((event, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{event.type}</span>
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <h4 className="font-semibold text-gray-900">{event.title}</h4>
+                <Button
+                  size="sm"
+                  onClick={() => handleJoinEvent(event.id, event.title)}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Register
+                </Button>
               </div>
-              <div className="space-y-1 text-sm text-gray-600">
+              
+              <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4" />
-                  <span>{event.date}</span>
+                  <span>{formatDate(event.date)}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Clock className="h-4 w-4" />
@@ -58,12 +90,20 @@ export const UpcomingEvents = () => {
                   <span>{event.location}</span>
                 </div>
               </div>
-              <Button size="sm" className="mt-3 w-full">
-                Register Now
-              </Button>
             </div>
           ))}
         </div>
+        
+        <Button
+          variant="outline"
+          className="w-full mt-4"
+          onClick={() => toast({
+            title: "All Events",
+            description: "Loading complete events calendar...",
+          })}
+        >
+          View All Events
+        </Button>
       </CardContent>
     </Card>
   );

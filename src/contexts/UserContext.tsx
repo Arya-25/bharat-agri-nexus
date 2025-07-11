@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface UserData {
   firstName: string;
@@ -17,6 +17,7 @@ interface UserContextType {
   user: UserData | null;
   setUser: (user: UserData | null) => void;
   isLoggedIn: boolean;
+  isInitialized: boolean;
   login: (userData: UserData) => void;
   logout: () => void;
 }
@@ -25,23 +26,35 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const login = (userData: UserData) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('isLoggedIn', 'true');
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('isLoggedIn');
   };
 
   // Check for existing user data on mount
-  React.useEffect(() => {
+  useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    if (storedUser && isLoggedIn === 'true') {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('isLoggedIn');
+      }
     }
+    setIsInitialized(true);
   }, []);
 
   return (
@@ -49,6 +62,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       user,
       setUser,
       isLoggedIn: !!user,
+      isInitialized,
       login,
       logout
     }}>
