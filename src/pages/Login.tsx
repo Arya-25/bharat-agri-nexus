@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Leaf, Mail, Lock } from "lucide-react";
@@ -21,45 +20,31 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login process
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const result = await login(email, password);
       
-      // Check if user exists in localStorage from registration
-      const existingUser = localStorage.getItem('user');
-      if (existingUser) {
-        const userData = JSON.parse(existingUser);
-        if (userData.email === email) {
-          login(userData);
-          toast({
-            title: "Login Successful",
-            description: "Welcome back to AgriBusiness Pro!",
-          });
-          navigate("/dashboard");
-          return;
-        }
+      if (result.success) {
+        toast({
+          title: "Login Successful",
+          description: result.message,
+        });
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Login Failed",
+          description: result.message,
+          variant: "destructive",
+        });
       }
-
-      // For demo purposes, create a default user if no registered user found
-      const defaultUser = {
-        firstName: "Demo",
-        lastName: "User",
-        email: email,
-        phone: "+91 9876543210",
-        organization: "Sample Organization",
-        userType: "farmer",
-        location: "Maharashtra, India",
-        joinDate: "2024-01-15",
-        bio: "Demo user account for testing purposes.",
-      };
-
-      login(defaultUser);
+    } catch (error) {
       toast({
-        title: "Login Successful",
-        description: "Welcome back to AgriBusiness Pro!",
+        title: "Login Failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
       });
-      navigate("/dashboard");
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
