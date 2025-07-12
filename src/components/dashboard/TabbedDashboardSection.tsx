@@ -89,55 +89,53 @@ export const TabbedDashboardSection = () => {
 
           <TabsContent value="events" className="mt-6">
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Upcoming Events List</CardTitle>
+                    <CardTitle className="text-lg">Events Calendar & Upcoming Events</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {upcomingEvents.map((event) => (
-                        <div
-                          key={event.id}
-                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex justify-between items-start mb-3">
-                            <h4 className="font-semibold text-gray-900">{event.title}</h4>
-                            <Button
-                              size="sm"
-                              onClick={() => handleJoinEvent(event.id, event.title)}
-                              className="bg-green-600 hover:bg-green-700"
-                            >
-                              Register
-                            </Button>
-                          </div>
-                          
-                          <div className="space-y-2 text-sm text-gray-600">
-                            <div className="flex items-center space-x-2">
-                              <Calendar className="h-4 w-4" />
-                              <span>{formatDate(event.date)}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Clock className="h-4 w-4" />
-                              <span>{event.time}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <MapPin className="h-4 w-4" />
-                              <span>{event.location}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="mb-8">
+                      <EventsCalendar />
                     </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Calendar View</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <EventsCalendar />
+                    
+                    <div className="border-t pt-6">
+                      <h4 className="text-lg font-semibold mb-4">Quick Event List</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {upcomingEvents.map((event) => (
+                          <div
+                            key={event.id}
+                            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex justify-between items-start mb-3">
+                              <h5 className="font-semibold text-gray-900 text-sm">{event.title}</h5>
+                              <Button
+                                size="sm"
+                                onClick={() => handleJoinEvent(event.id, event.title)}
+                                className="bg-green-600 hover:bg-green-700 text-xs px-2 py-1"
+                              >
+                                Join
+                              </Button>
+                            </div>
+                            
+                            <div className="space-y-1 text-xs text-gray-600">
+                              <div className="flex items-center space-x-1">
+                                <Calendar className="h-3 w-3" />
+                                <span>{formatDate(event.date)}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Clock className="h-3 w-3" />
+                                <span>{event.time}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <MapPin className="h-3 w-3" />
+                                <span>{event.location}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

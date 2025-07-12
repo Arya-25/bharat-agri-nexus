@@ -56,9 +56,18 @@ export const EventsCalendar = () => {
     });
   };
 
+  const formatSelectedDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card>
+      <Card className="h-fit">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <CalendarIcon className="h-5 w-5" />
@@ -70,7 +79,7 @@ export const EventsCalendar = () => {
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            className="rounded-md border pointer-events-auto"
+            className="rounded-md border pointer-events-auto w-full"
             modifiers={{
               eventDay: eventDates
             }}
@@ -85,10 +94,10 @@ export const EventsCalendar = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="h-fit">
         <CardHeader>
           <CardTitle>
-            {selectedDate ? `Events on ${selectedDate.toDateString()}` : 'Select a date to view events'}
+            {selectedDate ? `Events on ${formatSelectedDate(selectedDate)}` : 'Select a date to view events'}
           </CardTitle>
         </CardHeader>
         <CardContent>

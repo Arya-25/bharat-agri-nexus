@@ -3,12 +3,16 @@ import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { RegistrationSuccessModal } from "@/components/modals/RegistrationSuccessModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventsCalendar } from "@/components/EventsCalendar";
+import { useUser } from "@/contexts/UserContext";
 
 export const Events = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { isLoggedIn } = useUser();
   const [registering, setRegistering] = useState<number | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
@@ -44,6 +48,16 @@ export const Events = () => {
   ];
 
   const handleRegister = async (eventId: number, event: any) => {
+    // If user is not logged in, redirect to register page
+    if (!isLoggedIn) {
+      toast({
+        title: "Registration Required",
+        description: "Please create an account to register for events.",
+      });
+      navigate("/register");
+      return;
+    }
+
     setRegistering(eventId);
     
     // Simulate API call delay with loading animation
