@@ -161,14 +161,15 @@ export const marketApi = {
     const marketData = baseData.map(item => {
       const fluctuation = (Math.random() - 0.5) * 0.1; // ±5% fluctuation
       const currentPrice = Math.round(item.basePrice * (1 + fluctuation));
-      const change = ((currentPrice - item.basePrice) / item.basePrice * 100).toFixed(1);
+      const changeValue = ((currentPrice - item.basePrice) / item.basePrice * 100);
+      const change = changeValue.toFixed(1);
       
       return {
         name: item.name,
         price: `₹${currentPrice.toLocaleString()}`,
         unit: item.unit,
-        change: `${change > 0 ? '+' : ''}${change}%`,
-        trend: change > 0 ? "up" : "down"
+        change: `${changeValue > 0 ? '+' : ''}${change}%`,
+        trend: changeValue > 0 ? "up" : "down"
       };
     });
     
