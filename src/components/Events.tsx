@@ -1,10 +1,16 @@
 
 import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 export const Events = () => {
+  const { toast } = useToast();
+  const [registering, setRegistering] = useState<number | null>(null);
+
   const upcomingEvents = [
     {
+      id: 1,
       title: "AgriBusiness Innovation Summit 2024",
       date: "March 15-17, 2024",
       location: "New Delhi, India",
@@ -13,6 +19,7 @@ export const Events = () => {
       type: "Conference"
     },
     {
+      id: 2,
       title: "FPO Digital Transformation Workshop",
       date: "April 8-9, 2024",
       location: "Pune, Maharashtra",
@@ -21,6 +28,7 @@ export const Events = () => {
       type: "Workshop"
     },
     {
+      id: 3,
       title: "International Agri-Trade Exhibition",
       date: "May 22-25, 2024",
       location: "Mumbai, India",
@@ -29,6 +37,46 @@ export const Events = () => {
       type: "Exhibition"
     }
   ];
+
+  const handleRegister = async (eventId: number, eventTitle: string) => {
+    setRegistering(eventId);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Save registration to localStorage for demo
+    const registrations = JSON.parse(localStorage.getItem("eventRegistrations") || "[]");
+    const newRegistration = {
+      id: Date.now(),
+      eventId,
+      eventTitle,
+      registeredAt: new Date().toISOString(),
+      status: "confirmed"
+    };
+    registrations.push(newRegistration);
+    localStorage.setItem("eventRegistrations", JSON.stringify(registrations));
+    
+    setRegistering(null);
+    toast({
+      title: "Registration Successful!",
+      description: `You have been registered for "${eventTitle}". Confirmation details sent to your email.`,
+    });
+  };
+
+  const handleViewAllEvents = () => {
+    toast({
+      title: "Loading All Events",
+      description: "Fetching complete events calendar with advanced filters...",
+    });
+    
+    // Simulate loading more events
+    setTimeout(() => {
+      toast({
+        title: "Events Calendar Loaded",
+        description: "Browse through 50+ upcoming agricultural events and workshops.",
+      });
+    }, 1500);
+  };
 
   return (
     <section id="events" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50">
@@ -45,7 +93,7 @@ export const Events = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {upcomingEvents.map((event, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-4">
                 <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">{event.type}</span>
                 <h3 className="text-xl font-semibold text-white mt-2">{event.title}</h3>
@@ -69,8 +117,19 @@ export const Events = () => {
                   </div>
                 </div>
                 
-                <Button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                  Register Now
+                <Button 
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-200"
+                  onClick={() => handleRegister(event.id, event.title)}
+                  disabled={registering === event.id}
+                >
+                  {registering === event.id ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Registering...
+                    </>
+                  ) : (
+                    "Register Now"
+                  )}
                 </Button>
               </div>
             </div>
@@ -78,7 +137,12 @@ export const Events = () => {
         </div>
         
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="border-green-300 text-green-700 hover:bg-green-50">
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="border-green-300 text-green-700 hover:bg-green-50 transition-all duration-200"
+            onClick={handleViewAllEvents}
+          >
             View All Events
           </Button>
         </div>
