@@ -10,6 +10,7 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { MarketPrices } from "@/components/dashboard/MarketPrices";
+import { TabbedDashboardSection } from "@/components/dashboard/TabbedDashboardSection";
 import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
@@ -96,10 +97,14 @@ const Dashboard = () => {
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-            {/* Left Column */}
+            {/* Left Column - Full Width Tabbed Section */}
+            <div className="lg:col-span-3">
+              <TabbedDashboardSection />
+            </div>
+
+            {/* Secondary Content Grid */}
             <div className="lg:col-span-2 space-y-6">
               <RecentActivity />
-              <UpcomingEvents />
             </div>
 
             {/* Right Column */}

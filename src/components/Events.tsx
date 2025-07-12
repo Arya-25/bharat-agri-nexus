@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { RegistrationSuccessModal } from "@/components/modals/RegistrationSuccessModal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EventsCalendar } from "@/components/EventsCalendar";
 
 export const Events = () => {
   const { toast } = useToast();
@@ -106,60 +108,79 @@ export const Events = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {upcomingEvents.map((event, index) => (
-              <div 
-                key={index} 
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in"
-                style={{animationDelay: `${0.4 + index * 0.2}s`}}
-              >
-                <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-4 relative">
-                  <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-full p-1">
-                    <Calendar className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">{event.type}</span>
-                  <h3 className="text-xl font-semibold text-white mt-2 leading-tight">{event.title}</h3>
-                </div>
-                
-                <div className="p-6">
-                  <p className="text-gray-600 mb-4 leading-relaxed">{event.description}</p>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
-                      <Calendar className="h-4 w-4 mr-2 text-green-600" />
-                      <span className="text-sm font-medium">{event.date}</span>
-                    </div>
-                    <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
-                      <MapPin className="h-4 w-4 mr-2 text-green-600" />
-                      <span className="text-sm font-medium">{event.location}</span>
-                    </div>
-                    <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
-                      <Users className="h-4 w-4 mr-2 text-green-600" />
-                      <span className="text-sm font-medium">{event.attendees}</span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105"
-                    onClick={() => handleRegister(event.id, event)}
-                    disabled={registering === event.id}
+          <Tabs defaultValue="list" className="w-full">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+              <TabsTrigger value="list" className="flex items-center space-x-2">
+                <Users className="h-4 w-4" />
+                <span>Events List</span>
+              </TabsTrigger>
+              <TabsTrigger value="calendar" className="flex items-center space-x-2">
+                <Calendar className="h-4 w-4" />
+                <span>Calendar View</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="list">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {upcomingEvents.map((event, index) => (
+                  <div 
+                    key={index} 
+                    className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in"
+                    style={{animationDelay: `${0.4 + index * 0.2}s`}}
                   >
-                    {registering === event.id ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Registering...
-                      </>
-                    ) : (
-                      <>
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Register Now
-                      </>
-                    )}
-                  </Button>
-                </div>
+                    <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-4 relative">
+                      <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-full p-1">
+                        <Calendar className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">{event.type}</span>
+                      <h3 className="text-xl font-semibold text-white mt-2 leading-tight">{event.title}</h3>
+                    </div>
+                    
+                    <div className="p-6">
+                      <p className="text-gray-600 mb-4 leading-relaxed">{event.description}</p>
+                      
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
+                          <Calendar className="h-4 w-4 mr-2 text-green-600" />
+                          <span className="text-sm font-medium">{event.date}</span>
+                        </div>
+                        <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
+                          <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                          <span className="text-sm font-medium">{event.location}</span>
+                        </div>
+                        <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
+                          <Users className="h-4 w-4 mr-2 text-green-600" />
+                          <span className="text-sm font-medium">{event.attendees}</span>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105"
+                        onClick={() => handleRegister(event.id, event)}
+                        disabled={registering === event.id}
+                      >
+                        {registering === event.id ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            Registering...
+                          </>
+                        ) : (
+                          <>
+                            <Calendar className="h-4 w-4 mr-2" />
+                            Register Now
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </TabsContent>
+
+            <TabsContent value="calendar">
+              <EventsCalendar />
+            </TabsContent>
+          </Tabs>
           
           <div className="text-center mt-12">
             <Button 
