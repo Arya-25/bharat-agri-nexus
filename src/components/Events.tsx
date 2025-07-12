@@ -3,10 +3,13 @@ import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { RegistrationSuccessModal } from "@/components/modals/RegistrationSuccessModal";
 
 export const Events = () => {
   const { toast } = useToast();
   const [registering, setRegistering] = useState<number | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
   const upcomingEvents = [
     {
@@ -38,28 +41,35 @@ export const Events = () => {
     }
   ];
 
-  const handleRegister = async (eventId: number, eventTitle: string) => {
+  const handleRegister = async (eventId: number, event: any) => {
     setRegistering(eventId);
     
-    // Simulate API call delay
+    // Simulate API call delay with loading animation
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Save registration to localStorage for demo
+    // Save registration to localStorage
     const registrations = JSON.parse(localStorage.getItem("eventRegistrations") || "[]");
     const newRegistration = {
       id: Date.now(),
       eventId,
-      eventTitle,
+      eventTitle: event.title,
+      eventDate: event.date,
+      eventLocation: event.location,
       registeredAt: new Date().toISOString(),
-      status: "confirmed"
+      status: "confirmed",
+      ticketNumber: `TKT${Date.now().toString().slice(-6)}`
     };
     registrations.push(newRegistration);
     localStorage.setItem("eventRegistrations", JSON.stringify(registrations));
     
     setRegistering(null);
+    setSelectedEvent(event);
+    setShowSuccessModal(true);
+    
+    // Also show toast for immediate feedback
     toast({
-      title: "Registration Successful!",
-      description: `You have been registered for "${eventTitle}". Confirmation details sent to your email.`,
+      title: "🎉 Registration Successful!",
+      description: `You have been registered for "${event.title}". Check your email for confirmation.`,
     });
   };
 
@@ -69,7 +79,6 @@ export const Events = () => {
       description: "Fetching complete events calendar with advanced filters...",
     });
     
-    // Simulate loading more events
     setTimeout(() => {
       toast({
         title: "Events Calendar Loaded",
@@ -79,74 +88,98 @@ export const Events = () => {
   };
 
   return (
-    <section id="events" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Upcoming Events & Exhibitions
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Join us at industry-leading events that bring together the entire 
-            agricultural ecosystem for networking, learning, and collaboration.
-          </p>
-        </div>
+    <>
+      <section id="events" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50 relative overflow-hidden">
+        {/* Background Decorations */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23059669" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {upcomingEvents.map((event, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-4">
-                <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">{event.type}</span>
-                <h3 className="text-xl font-semibold text-white mt-2">{event.title}</h3>
-              </div>
-              
-              <div className="p-6">
-                <p className="text-gray-600 mb-4">{event.description}</p>
-                
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center text-gray-700">
-                    <Calendar className="h-4 w-4 mr-2 text-green-600" />
-                    <span className="text-sm">{event.date}</span>
+        <div className="max-w-7xl mx-auto relative">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
+              Upcoming Events & Exhibitions
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in" style={{animationDelay: '0.2s'}}>
+              Join us at industry-leading events that bring together the entire 
+              agricultural ecosystem for networking, learning, and collaboration.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {upcomingEvents.map((event, index) => (
+              <div 
+                key={index} 
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in"
+                style={{animationDelay: `${0.4 + index * 0.2}s`}}
+              >
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-4 relative">
+                  <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-full p-1">
+                    <Calendar className="h-4 w-4 text-white" />
                   </div>
-                  <div className="flex items-center text-gray-700">
-                    <MapPin className="h-4 w-4 mr-2 text-green-600" />
-                    <span className="text-sm">{event.location}</span>
-                  </div>
-                  <div className="flex items-center text-gray-700">
-                    <Users className="h-4 w-4 mr-2 text-green-600" />
-                    <span className="text-sm">{event.attendees}</span>
-                  </div>
+                  <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">{event.type}</span>
+                  <h3 className="text-xl font-semibold text-white mt-2 leading-tight">{event.title}</h3>
                 </div>
                 
-                <Button 
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-200"
-                  onClick={() => handleRegister(event.id, event.title)}
-                  disabled={registering === event.id}
-                >
-                  {registering === event.id ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Registering...
-                    </>
-                  ) : (
-                    "Register Now"
-                  )}
-                </Button>
+                <div className="p-6">
+                  <p className="text-gray-600 mb-4 leading-relaxed">{event.description}</p>
+                  
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
+                      <Calendar className="h-4 w-4 mr-2 text-green-600" />
+                      <span className="text-sm font-medium">{event.date}</span>
+                    </div>
+                    <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
+                      <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                      <span className="text-sm font-medium">{event.location}</span>
+                    </div>
+                    <div className="flex items-center text-gray-700 hover:text-green-600 transition-colors">
+                      <Users className="h-4 w-4 mr-2 text-green-600" />
+                      <span className="text-sm font-medium">{event.attendees}</span>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105"
+                    onClick={() => handleRegister(event.id, event)}
+                    disabled={registering === event.id}
+                  >
+                    {registering === event.id ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Registering...
+                      </>
+                    ) : (
+                      <>
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Register Now
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="border-green-300 text-green-700 hover:bg-green-50 transition-all duration-200 transform hover:scale-105"
+              onClick={handleViewAllEvents}
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              View All Events
+            </Button>
+          </div>
         </div>
-        
-        <div className="text-center mt-12">
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="border-green-300 text-green-700 hover:bg-green-50 transition-all duration-200"
-            onClick={handleViewAllEvents}
-          >
-            View All Events
-          </Button>
-        </div>
-      </div>
-    </section>
+      </section>
+
+      <RegistrationSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        eventTitle={selectedEvent?.title || ""}
+        eventDate={selectedEvent?.date || ""}
+        eventLocation={selectedEvent?.location || ""}
+      />
+    </>
   );
 };

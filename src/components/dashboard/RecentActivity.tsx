@@ -1,13 +1,15 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { ActivityDetailsModal } from "@/components/modals/ActivityDetailsModal";
 
 export const RecentActivity = () => {
   const { toast } = useToast();
   const [activities, setActivities] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const defaultActivities = [
     {
@@ -49,7 +51,6 @@ export const RecentActivity = () => {
   ];
 
   useEffect(() => {
-    // Load activities from localStorage or use defaults
     const savedActivities = localStorage.getItem("recentActivities");
     if (savedActivities) {
       setActivities(JSON.parse(savedActivities));
@@ -60,7 +61,9 @@ export const RecentActivity = () => {
   }, []);
 
   const handleViewActivity = (activity: any) => {
-    // Save viewed activity to localStorage
+    setSelectedActivity(activity);
+    setIsModalOpen(true);
+    
     const viewedActivities = JSON.parse(localStorage.getItem("viewedActivities") || "[]");
     const viewedActivity = {
       ...activity,
@@ -68,11 +71,6 @@ export const RecentActivity = () => {
     };
     viewedActivities.push(viewedActivity);
     localStorage.setItem("viewedActivities", JSON.stringify(viewedActivities));
-
-    toast({
-      title: `${activity.title} - Details`,
-      description: `${activity.description} | Status: ${activity.status} | Amount: ${activity.amount}`,
-    });
   };
 
   const handleViewAllActivities = () => {
@@ -119,53 +117,66 @@ export const RecentActivity = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {activities.map((activity: any) => (
-            <div
-              key={activity.id}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-              onClick={() => handleViewActivity(activity)}
-            >
-              <div className="flex-1">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">{getTypeIcon(activity.type)}</span>
-                  <h4 className="font-medium text-gray-900">{activity.title}</h4>
-                  <Badge className={getStatusColor(activity.status)}>
-                    {activity.status}
-                  </Badge>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">{activity.description}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <p className="text-xs text-gray-500">{activity.time}</p>
-                  <p className="text-sm font-medium text-green-600">{activity.amount}</p>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleViewActivity(activity);
-                }}
+    <>
+      <Card className="hover:shadow-lg transition-shadow duration-300">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Recent Activity
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {activities.map((activity: any) => (
+              <div
+                key={activity.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 cursor-pointer transform hover:scale-[1.02]"
+                onClick={() => handleViewActivity(activity)}
               >
-                View Details
-              </Button>
-            </div>
-          ))}
-        </div>
-        <Button
-          variant="outline"
-          className="w-full mt-4"
-          onClick={handleViewAllActivities}
-        >
-          View All Activities
-        </Button>
-      </CardContent>
-    </Card>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-lg animate-pulse">{getTypeIcon(activity.type)}</span>
+                    <h4 className="font-medium text-gray-900">{activity.title}</h4>
+                    <Badge className={getStatusColor(activity.status)}>
+                      {activity.status}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">{activity.description}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs text-gray-500">{activity.time}</p>
+                    <p className="text-sm font-medium text-green-600">{activity.amount}</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewActivity(activity);
+                  }}
+                  className="hover:bg-green-50 hover:border-green-300 transition-colors"
+                >
+                  View Details
+                </Button>
+              </div>
+            ))}
+          </div>
+          <Button
+            variant="outline"
+            className="w-full mt-4 hover:bg-green-50 hover:border-green-300 transition-colors"
+            onClick={handleViewAllActivities}
+          >
+            View All Activities
+          </Button>
+        </CardContent>
+      </Card>
+
+      <ActivityDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        activity={selectedActivity}
+      />
+    </>
   );
 };
