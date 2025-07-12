@@ -16,12 +16,30 @@ export const Navigation = () => {
     navigate("/");
   };
 
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+    setIsOpen(false);
+  };
+
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Services", href: "/#services" },
-    { name: "Features", href: "/#features" },
-    { name: "Events", href: "/#events" },
-    { name: "Contact", href: "/#contact" },
+    { name: "Home", action: () => scrollToSection("home") },
+    { name: "Services", action: () => scrollToSection("services") },
+    { name: "Features", action: () => scrollToSection("features") },
+    { name: "Events", action: () => scrollToSection("events") },
+    { name: "Contact", action: () => scrollToSection("contact") },
   ];
 
   const authenticatedNavigation = [
@@ -81,13 +99,13 @@ export const Navigation = () => {
             ) : (
               <>
                 {navigation.map((item) => (
-                  <Link
+                  <button
                     key={item.name}
-                    to={item.href}
-                    className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors"
+                    onClick={item.action}
+                    className="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
                   >
                     {item.name}
-                  </Link>
+                  </button>
                 ))}
                 <div className="flex items-center space-x-4">
                   <Link to="/login">
@@ -154,13 +172,13 @@ export const Navigation = () => {
             ) : (
               <>
                 {navigation.map((item) => (
-                  <Link
+                  <button
                     key={item.name}
-                    to={item.href}
-                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors"
+                    onClick={item.action}
+                    className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-green-600 hover:bg-green-50 transition-colors"
                   >
                     {item.name}
-                  </Link>
+                  </button>
                 ))}
                 <div className="px-3 py-2 space-y-2">
                   <Link to="/login" className="block">

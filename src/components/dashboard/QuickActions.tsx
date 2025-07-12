@@ -8,6 +8,8 @@ import { NewProductModal } from "@/components/modals/NewProductModal";
 import { ImageUploadModal } from "@/components/modals/ImageUploadModal";
 import { ContactSupportModal } from "@/components/modals/ContactSupportModal";
 import { ScheduleMeetingModal } from "@/components/modals/ScheduleMeetingModal";
+import { ReportViewModal } from "@/components/modals/ReportViewModal";
+import { AccountSettingsModal } from "@/components/modals/AccountSettingsModal";
 
 export const QuickActions = () => {
   const { toast } = useToast();
@@ -16,24 +18,16 @@ export const QuickActions = () => {
   const handleGenerateReport = () => {
     toast({
       title: "Generating Report",
-      description: "Your business report is being prepared. This may take a few moments...",
+      description: "Your business report is being prepared...",
     });
     
-    // Simulate report generation
     setTimeout(() => {
-      toast({
-        title: "Report Ready",
-        description: "Your business report has been generated and saved to your dashboard.",
-      });
-    }, 3000);
+      setActiveModal("reportView");
+    }, 1500);
   };
 
   const handleAccountSettings = () => {
-    toast({
-      title: "Account Settings",
-      description: "Redirecting to account settings page...",
-    });
-    // In a real app, this would navigate to settings page
+    setActiveModal("accountSettings");
   };
 
   const actions = [
@@ -115,6 +109,14 @@ export const QuickActions = () => {
       />
       <ScheduleMeetingModal 
         open={activeModal === "scheduleMeeting"} 
+        onOpenChange={(open) => !open && setActiveModal(null)} 
+      />
+      <ReportViewModal 
+        open={activeModal === "reportView"} 
+        onOpenChange={(open) => !open && setActiveModal(null)} 
+      />
+      <AccountSettingsModal 
+        open={activeModal === "accountSettings"} 
         onOpenChange={(open) => !open && setActiveModal(null)} 
       />
     </>
