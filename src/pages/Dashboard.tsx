@@ -108,30 +108,29 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* Analytics Overview - First Priority */}
+          <div className="mb-8">
+            <AnalyticsChart />
+          </div>
+
           {/* Stats Grid */}
           <DashboardStats />
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-            {/* Left Column - Full Width Tabbed Section */}
-            <div className="lg:col-span-3">
-              <TabbedDashboardSection />
-            </div>
-
-            {/* Secondary Content Grid */}
+            {/* Left Column - Events and Activities */}
             <div className="lg:col-span-2 space-y-6">
+              <UpcomingEvents />
+              <TabbedDashboardSection />
               <RecentActivity />
             </div>
 
-            {/* Right Column */}
+            {/* Right Column - Quick Actions and Widgets */}
             <div className="space-y-6">
               <QuickActions />
               <WeatherWidget />
               <MarketPrices />
             </div>
-
-            {/* Analytics Charts Section */}
-            <AnalyticsChart />
           </div>
 
           {/* Modals */}
