@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { BarChart3, Users, Calendar, TrendingUp, Bell, MessageSquare, FileText, Settings, Tag, Award, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,10 +12,15 @@ import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { WeatherWidget } from "@/components/dashboard/WeatherWidget";
 import { MarketPrices } from "@/components/dashboard/MarketPrices";
 import { TabbedDashboardSection } from "@/components/dashboard/TabbedDashboardSection";
+import { AnalyticsChart } from "@/components/dashboard/AnalyticsChart";
+import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
+import { MessagesPanel } from "@/components/dashboard/MessagesPanel";
 import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
   const { user } = useUser();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [messagesOpen, setMessagesOpen] = useState(false);
   
   const userTags = [
     { name: "Verified Farmer", color: "bg-green-100 text-green-800" },
@@ -56,11 +62,21 @@ const Dashboard = () => {
                 <p className="text-gray-600 mt-2">Here's what's happening with your AgriBusiness today.</p>
               </div>
               <div className="flex items-center space-x-3">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setNotificationsOpen(true)}
+                  className="hover:bg-blue-50 hover:border-blue-300"
+                >
                   <Bell className="h-4 w-4 mr-2" />
                   Notifications
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setMessagesOpen(true)}
+                  className="hover:bg-green-50 hover:border-green-300"
+                >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Messages
                 </Button>
@@ -113,7 +129,20 @@ const Dashboard = () => {
               <WeatherWidget />
               <MarketPrices />
             </div>
+
+            {/* Analytics Charts Section */}
+            <AnalyticsChart />
           </div>
+
+          {/* Modals */}
+          <NotificationsPanel 
+            isOpen={notificationsOpen} 
+            onClose={() => setNotificationsOpen(false)} 
+          />
+          <MessagesPanel 
+            isOpen={messagesOpen} 
+            onClose={() => setMessagesOpen(false)} 
+          />
         </div>
       </div>
     </div>
