@@ -15,26 +15,9 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  let user, isLoggedIn, isInitialized, loading;
-  
-  try {
-    const userContext = useUser();
-    user = userContext.user;
-    isLoggedIn = userContext.isLoggedIn;
-    isInitialized = userContext.isInitialized;
-    loading = userContext.loading;
-  } catch (error) {
-    console.error('Error accessing user context:', error);
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600">Error loading user context. Please refresh the page.</p>
-        </div>
-      </div>
-    );
-  }
+  const { isLoggedIn, isInitialized } = useUser();
 
-  if (!isInitialized || loading) {
+  if (!isInitialized) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">
