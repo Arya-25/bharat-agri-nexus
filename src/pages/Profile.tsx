@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail, Phone, Building2, MapPin, Calendar, Edit2, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Profile = () => {
   const { user, supabaseUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState(user || {
+  const [editData, setEditData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -25,6 +25,14 @@ const Profile = () => {
     joinDate: "",
     bio: "",
   });
+  const [saving, setSaving] = useState(false);
+
+  // Update editData when user data changes
+  useEffect(() => {
+    if (user) {
+      setEditData(user);
+    }
+  }, [user]);
   const { toast } = useToast();
 
   const userTypes = {
@@ -43,6 +51,7 @@ const Profile = () => {
 
   const handleSave = async () => {
     if (user && supabaseUser) {
+      setSaving(true);
       try {
         const { error } = await supabase
           .from('profiles')
@@ -50,10 +59,13 @@ const Profile = () => {
             full_name: `${editData.firstName} ${editData.lastName}`,
             phone: editData.phone,
             location: editData.location,
+            organization: editData.organization,
+            bio: editData.bio,
           })
           .eq('user_id', supabaseUser.id);
 
         if (error) {
+          console.error('Update error:', error);
           toast({
             title: "Error",
             description: "Failed to update profile. Please try again.",
@@ -66,15 +78,25 @@ const Profile = () => {
           title: "Profile Updated",
           description: "Your profile has been successfully updated.",
         });
+        
+        setIsEditing(false);
+        
+        // Force re-fetch to update the context
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+
       } catch (error) {
+        console.error('Save error:', error);
         toast({
           title: "Error",
           description: "An unexpected error occurred. Please try again.",
           variant: "destructive",
         });
+      } finally {
+        setSaving(false);
       }
     }
-    setIsEditing(false);
   };
 
   const handleCancel = () => {
@@ -134,11 +156,11 @@ const Profile = () => {
                     </Button>
                   ) : (
                     <div className="flex space-x-2">
-                      <Button onClick={handleSave} size="sm">
+                      <Button onClick={handleSave} size="sm" disabled={saving}>
                         <Save className="h-4 w-4 mr-2" />
-                        Save
+                        {saving ? "Saving..." : "Save"}
                       </Button>
-                      <Button onClick={handleCancel} variant="outline" size="sm">
+                      <Button onClick={handleCancel} variant="outline" size="sm" disabled={saving}>
                         <X className="h-4 w-4 mr-2" />
                         Cancel
                       </Button>
