@@ -9,9 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Navigation } from "@/components/Navigation";
 import { useUser } from "@/contexts/UserContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
-  const { user, setUser } = useUser();
+  const { user, supabaseUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(user || {
     firstName: "",
@@ -40,17 +41,40 @@ const Profile = () => {
     setEditData(user || editData);
   };
 
-  const handleSave = () => {
-    if (user) {
-      const updatedUser = { ...user, ...editData };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+  const handleSave = async () => {
+    if (user && supabaseUser) {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            full_name: `${editData.firstName} ${editData.lastName}`,
+            phone: editData.phone,
+            location: editData.location,
+          })
+          .eq('user_id', supabaseUser.id);
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: "Failed to update profile. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been successfully updated.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
     setIsEditing(false);
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been successfully updated.",
-    });
   };
 
   const handleCancel = () => {
