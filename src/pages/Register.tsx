@@ -72,13 +72,13 @@ const Register = () => {
       if (result.success) {
         toast({
           title: "Registration Successful",
-          description: "Welcome to AgriBusiness Pro! Redirecting to dashboard...",
+          description: "Please check your email and click the verification link before logging in.",
         });
 
-        // Redirect to dashboard
+        // Redirect to login page instead of dashboard
         setTimeout(() => {
-          navigate("/dashboard");
-        }, 1000);
+          navigate("/login");
+        }, 2000);
       } else {
         toast({
           title: "Registration Failed",

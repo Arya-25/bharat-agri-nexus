@@ -20,6 +20,7 @@ interface UserContextType {
   supabaseUser: User | null;
   loading: boolean;
   isLoggedIn: boolean;
+  isEmailVerified: boolean;
   isInitialized: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   register: (userData: any) => Promise<{ success: boolean; message: string }>;
@@ -82,6 +83,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return { success: false, message: error.message };
       }
 
+      if (data.user && !data.user.email_confirmed_at) {
+        return { success: false, message: 'Please verify your email before logging in. Check your email for the verification link.' };
+      }
+
       if (data.user) {
         await fetchUserProfile(data.user.id);
         return { success: true, message: 'Login successful' };
@@ -128,7 +133,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           await fetchUserProfile(data.user!.id);
         }, 1000); // Small delay to ensure the trigger has executed
 
-        return { success: true, message: 'Registration successful! Please check your email to verify your account.' };
+        return { success: true, message: 'Registration successful! Please check your email and click the verification link before logging in.' };
       }
 
       return { success: false, message: 'Registration failed' };
@@ -202,6 +207,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       supabaseUser,
       loading,
       isLoggedIn: !!session,
+      isEmailVerified: !!session?.user?.email_confirmed_at,
       isInitialized,
       login,
       register,

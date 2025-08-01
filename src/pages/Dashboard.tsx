@@ -19,7 +19,7 @@ import FarmerMarketplace from "@/components/dashboard/FarmerMarketplace";
 import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
-  const { user } = useUser();
+  const { user, isLoggedIn, isEmailVerified } = useUser();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [messagesOpen, setMessagesOpen] = useState(false);
   
@@ -36,13 +36,25 @@ const Dashboard = () => {
     { name: "Global Reach", icon: Globe, color: "text-blue-600" },
   ];
 
-  if (!user) {
+  if (!isLoggedIn || !isEmailVerified) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
         <Navigation />
         <div className="pt-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Please log in to view your dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {!isLoggedIn ? 'Please log in to view your dashboard' : 'Please verify your email to access your dashboard'}
+            </h1>
+            {!isLoggedIn && (
+              <p className="mt-4 text-gray-600">
+                You need to be logged in to access this page.
+              </p>
+            )}
+            {isLoggedIn && !isEmailVerified && (
+              <p className="mt-4 text-gray-600">
+                Please check your email and click the verification link to access your dashboard.
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ import { useUser } from "@/contexts/UserContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
-  const { user, supabaseUser } = useUser();
+  const { user, supabaseUser, isLoggedIn, isEmailVerified } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(user || {
     firstName: "",
@@ -92,13 +92,15 @@ const Profile = () => {
     }));
   };
 
-  if (!user) {
+  if (!isLoggedIn || !isEmailVerified) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
         <Navigation />
         <div className="pt-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Please log in to view your profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {!isLoggedIn ? 'Please log in to view your profile' : 'Please verify your email to access your profile'}
+            </h1>
           </div>
         </div>
       </div>
