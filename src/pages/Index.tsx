@@ -8,6 +8,7 @@ import { Contact } from "@/components/Contact";
 import { CTA } from "@/components/CTA";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import ChatBot from "@/components/ChatBot";
 
 const Index = () => {
   return (
@@ -21,6 +22,7 @@ const Index = () => {
       <Contact />
       <CTA />
       <Footer />
+      <ChatBot />
     </div>
   );
 };

@@ -15,6 +15,7 @@ import { TabbedDashboardSection } from "@/components/dashboard/TabbedDashboardSe
 import { AnalyticsChart } from "@/components/dashboard/AnalyticsChart";
 import { NotificationsPanel } from "@/components/dashboard/NotificationsPanel";
 import { MessagesPanel } from "@/components/dashboard/MessagesPanel";
+import FarmerMarketplace from "@/components/dashboard/FarmerMarketplace";
 import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
@@ -116,6 +117,13 @@ const Dashboard = () => {
           {/* Stats Grid */}
           <DashboardStats />
 
+          {/* Farmer Marketplace - Show only for farmers */}
+          {user.userType === 'farmer' && (
+            <div className="mb-8">
+              <FarmerMarketplace />
+            </div>
+          )}
+
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
             {/* Left Column - Events and Activities */}
@@ -131,6 +139,26 @@ const Dashboard = () => {
               <WeatherWidget />
               <MarketPrices />
             </div>
+          </div>
+
+          {/* Bottom Section - Better alignment and spacing */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-green-600 mb-2">₹2.5L</div>
+              <div className="text-sm text-gray-600">Monthly Revenue</div>
+            </Card>
+            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-blue-600 mb-2">156</div>
+              <div className="text-sm text-gray-600">Active Orders</div>
+            </Card>
+            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-purple-600 mb-2">89%</div>
+              <div className="text-sm text-gray-600">Customer Satisfaction</div>
+            </Card>
+            <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-orange-600 mb-2">24</div>
+              <div className="text-sm text-gray-600">Partnership Deals</div>
+            </Card>
           </div>
 
           {/* Modals */}

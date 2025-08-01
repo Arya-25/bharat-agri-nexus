@@ -50,6 +50,9 @@ const Profile = () => {
             full_name: `${editData.firstName} ${editData.lastName}`,
             phone: editData.phone,
             location: editData.location,
+            organization: editData.organization,
+            user_type: editData.userType,
+            bio: editData.bio,
           })
           .eq('user_id', supabaseUser.id);
 

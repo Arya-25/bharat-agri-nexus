@@ -55,11 +55,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           lastName: profile.full_name?.split(' ').slice(1).join(' ') || '',
           email: profile.email || '',
           phone: profile.phone || '',
-          organization: '', // You might want to add this to the profiles table
-          userType: '', // You might want to add this to the profiles table
+          organization: profile.organization || '',
+          userType: profile.user_type || '',
           location: profile.location || '',
           joinDate: new Date(profile.created_at).toISOString().split('T')[0],
-          bio: '', // You might want to add this to the profiles table
+          bio: profile.bio || '',
         };
         setUser(userData);
         return userData;
@@ -110,6 +110,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             full_name: `${userData.firstName} ${userData.lastName}`,
             phone: userData.phone,
             location: userData.location,
+            organization: userData.organization,
+            user_type: userData.userType,
+            bio: userData.bio,
           }
         }
       });
