@@ -112,8 +112,8 @@ const ChatBot = () => {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 w-80 h-96 shadow-lg z-50">
-      <CardHeader className="pb-3">
+    <Card className="fixed bottom-6 right-6 w-80 h-[500px] shadow-lg z-50 flex flex-col">
+      <CardHeader className="pb-3 flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2 text-sm">
             <Bot className="h-4 w-4" />
@@ -128,8 +128,8 @@ const ChatBot = () => {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="p-0 flex flex-col h-full">
-        <ScrollArea className="flex-1 p-4">
+      <CardContent className="p-0 flex flex-col flex-1 min-h-0">
+        <ScrollArea className="flex-1 p-4 min-h-0">
           <div className="space-y-4">
             {messages.map((message) => (
               <div
@@ -172,7 +172,7 @@ const ChatBot = () => {
             )}
           </div>
         </ScrollArea>
-        <div className="p-4 border-t">
+        <div className="p-4 border-t flex-shrink-0 bg-white">
           <div className="flex space-x-2">
             <Input
               value={inputMessage}
