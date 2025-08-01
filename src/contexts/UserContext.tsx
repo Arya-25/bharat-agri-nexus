@@ -55,11 +55,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           lastName: profile.full_name?.split(' ').slice(1).join(' ') || '',
           email: profile.email || '',
           phone: profile.phone || '',
-          organization: profile.organization || '',
-          userType: profile.user_type || '',
+          organization: (profile as any).organization || '',
+          userType: (profile as any).user_type || '',
           location: profile.location || '',
           joinDate: new Date(profile.created_at).toISOString().split('T')[0],
-          bio: profile.bio || '',
+          bio: (profile as any).bio || '',
         };
         setUser(userData);
         return userData;
