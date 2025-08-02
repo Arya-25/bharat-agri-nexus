@@ -110,7 +110,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: userData.email,
         password: userData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             full_name: `${userData.firstName} ${userData.lastName}`,
             phone: userData.phone,
