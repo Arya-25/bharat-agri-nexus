@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Plus, Upload, MessageSquare, Calendar, FileText, Settings } from "lucide-react";
+import { Plus, Upload, MessageSquare, Calendar, FileText, Settings, Truck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -10,10 +10,32 @@ import { ContactSupportModal } from "@/components/modals/ContactSupportModal";
 import { ScheduleMeetingModal } from "@/components/modals/ScheduleMeetingModal";
 import { ReportViewModal } from "@/components/modals/ReportViewModal";
 import { AccountSettingsModal } from "@/components/modals/AccountSettingsModal";
+import { ShipmentTrackingModal } from "@/components/modals/ShipmentTrackingModal";
 
 export const QuickActions = () => {
   const { toast } = useToast();
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [selectedShipment, setSelectedShipment] = useState<any>(null);
+
+  // Sample shipment data
+  const sampleShipment = {
+    id: "1",
+    orderId: "12340",
+    status: "dispatched" as const,
+    amount: 18500,
+    trackingId: "SHP987654321",
+    carrier: "BlueDart Express",
+    estimatedDelivery: "2024-01-22",
+    destination: "Delhi Wholesale Market",
+    weight: "50kg",
+    dispatchedDate: "2024-01-21",
+    productName: "Organic Tomatoes"
+  };
+
+  const handleTrackShipment = () => {
+    setSelectedShipment(sampleShipment);
+    setActiveModal("trackShipment");
+  };
 
   const handleGenerateReport = () => {
     toast({
@@ -54,6 +76,12 @@ export const QuickActions = () => {
       label: "Schedule Meeting",
       description: "Book a consultation",
       action: () => setActiveModal("scheduleMeeting"),
+    },
+    {
+      icon: Truck,
+      label: "Track Shipment",
+      description: "Track your product shipments",
+      action: handleTrackShipment,
     },
     {
       icon: FileText,
@@ -118,6 +146,11 @@ export const QuickActions = () => {
       <AccountSettingsModal 
         open={activeModal === "accountSettings"} 
         onOpenChange={(open) => !open && setActiveModal(null)} 
+      />
+      <ShipmentTrackingModal 
+        isOpen={activeModal === "trackShipment"}
+        onClose={() => setActiveModal(null)}
+        shipment={selectedShipment}
       />
     </>
   );
