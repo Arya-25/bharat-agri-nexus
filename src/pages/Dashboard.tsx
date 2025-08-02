@@ -19,7 +19,7 @@ import FarmerMarketplace from "@/components/dashboard/FarmerMarketplace";
 import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
-  const { user, isLoggedIn, isEmailVerified } = useUser();
+  const { user, isLoggedIn, isEmailVerified, loading } = useUser();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [messagesOpen, setMessagesOpen] = useState(false);
   
@@ -36,7 +36,7 @@ const Dashboard = () => {
     { name: "Global Reach", icon: Globe, color: "text-blue-600" },
   ];
 
-  if (!isLoggedIn || !isEmailVerified) {
+  if (!isLoggedIn || !isEmailVerified || !user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
         <Navigation />
