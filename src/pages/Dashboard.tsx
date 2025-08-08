@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { BarChart3, Users, Calendar, TrendingUp, Bell, MessageSquare, FileText, Settings, Tag, Award, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,9 @@ const Dashboard = () => {
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Messages
                 </Button>
+                <Link to="/shop">
+                  <Button size="sm">Shop</Button>
+                </Link>
               </div>
             </div>
 
