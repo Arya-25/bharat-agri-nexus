@@ -45,6 +45,7 @@ export const Navigation = () => {
   const authenticatedNavigation = [
     { name: "Dashboard", href: "/dashboard" },
     { name: "Shop", href: "/shop" },
+    { name: "Cart", href: "/cart" },
     { name: "Profile", href: "/profile" },
   ];
 

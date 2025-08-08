@@ -12,52 +12,14 @@ import wheatIcon from "@/assets/wheat-icon.png";
 import appleIcon from "@/assets/apple-icon.png";
 import { Link } from "react-router-dom";
 
-// Simple mock products (could be moved to a separate data file if needed)
-const ALL_PRODUCTS = [
-  {
-    id: "p1",
-    name: "Organic Tomatoes (1kg)",
-    price: 120,
-    image: tomatoIcon,
-    rating: 4.6,
-    reviews: 128,
-    stock: 34,
-    category: "produce",
-    tags: ["fresh", "organic"],
-    description: "Freshly picked organic tomatoes from certified farms.",
-  },
-  {
-    id: "p2",
-    name: "Premium Wheat Seeds (5kg)",
-    price: 899,
-    image: wheatIcon,
-    rating: 4.4,
-    reviews: 76,
-    stock: 52,
-    category: "seeds",
-    tags: ["high yield", "drought tolerant"],
-    description: "High-germination wheat seed variety for excellent yield.",
-  },
-  {
-    id: "p3",
-    name: "Farm Fresh Apples (1kg)",
-    price: 160,
-    image: appleIcon,
-    rating: 4.8,
-    reviews: 210,
-    stock: 18,
-    category: "produce",
-    tags: ["juicy", "sweet"],
-    description: "Crisp and sweet apples sourced from hillside orchards.",
-  },
-];
-
-const currency = (n: number) => `₹${n.toLocaleString("en-IN")}`;
+// Product data moved to src/data/products.ts
 
 const Shop = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("all");
   const [sort, setSort] = useState<string>("popularity");
+  const [miniOpen, setMiniOpen] = useState(false);
+  const { addItem } = useCart();
 
   // SEO: set title, meta description, and canonical; add JSON-LD
   useEffect(() => {
@@ -91,7 +53,7 @@ const Shop = () => {
     const jsonLd = {
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      itemListElement: ALL_PRODUCTS.map((p, idx) => ({
+      itemListElement: PRODUCTS.map((p, idx) => ({
         '@type': 'Product',
         position: idx + 1,
         name: p.name,
@@ -122,11 +84,11 @@ const Shop = () => {
   }, []);
 
   const filtered = useMemo(() => {
-    let list = [...ALL_PRODUCTS];
+    let list = [...PRODUCTS];
     if (category !== "all") list = list.filter((p) => p.category === category);
     if (query.trim()) {
       const q = query.toLowerCase();
-      list = list.filter((p) => p.name.toLowerCase().includes(q) || p.tags.some((t) => t.includes(q)));
+      list = list.filter((p) => p.name.toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q)));
     }
     switch (sort) {
       case "price_low":
@@ -138,12 +100,16 @@ const Shop = () => {
     }
   }, [query, category, sort]);
 
-  const handleAddToCart = (name: string) => {
-    toast.success(`${name} added to cart (demo)`);
+  const handleAddToCart = (p: Product) => {
+    addItem(p, 1);
+    toast.success(`${p.name} added to cart`);
+    setMiniOpen(true);
   };
 
-  const handleBuyNow = (name: string) => {
-    toast.info(`Proceeding to checkout for ${name} (demo)`);
+  const handleBuyNow = (p: Product) => {
+    addItem(p, 1);
+    toast.info(`Proceeding to checkout for ${p.name} (demo)`);
+    setMiniOpen(true);
   };
 
   return (
@@ -172,6 +138,9 @@ const Shop = () => {
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="produce">Fresh Produce</SelectItem>
                   <SelectItem value="seeds">Seeds</SelectItem>
+                  <SelectItem value="fertilizer">Fertilizers</SelectItem>
+                  <SelectItem value="tools">Tools</SelectItem>
+                  <SelectItem value="equipment">Equipment</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={sort} onValueChange={setSort}>
@@ -188,47 +157,9 @@ const Shop = () => {
           </header>
 
           <section aria-label="Product listings" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((p) => (
-              <Card key={p.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardHeader className="p-0">
-                  <img
-                    src={p.image}
-                    alt={`${p.name} - agriculture product`}
-                    loading="lazy"
-                    className="w-full h-48 object-contain bg-white"
-                  />
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <CardTitle className="text-lg leading-tight">{p.name}</CardTitle>
-                      <div className="mt-1 text-sm text-muted-foreground">{p.description}</div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <Badge>{p.category}</Badge>
-                        {p.tags.map((t) => (
-                          <Badge key={t} variant="secondary">{t}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xl font-semibold text-gray-900">{currency(p.price)}</div>
-                      <div className="text-xs text-muted-foreground">{p.stock} in stock</div>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">⭐ {p.rating} · {p.reviews} reviews</div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => handleAddToCart(p.name)}>
-                        Add to Cart
-                      </Button>
-                      <Button size="sm" onClick={() => handleBuyNow(p.name)}>
-                        Buy Now
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+              {filtered.map((p) => (
+                <ProductCard key={p.id} product={p} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+              ))}
           </section>
 
           <aside className="mt-10 text-center text-sm text-muted-foreground">
@@ -236,6 +167,7 @@ const Shop = () => {
           </aside>
         </article>
       </main>
+      <MiniCart open={miniOpen} onOpenChange={setMiniOpen} />
     </div>
   );
 };
