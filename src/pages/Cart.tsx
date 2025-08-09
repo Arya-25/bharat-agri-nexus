@@ -7,13 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCart } from "@/contexts/CartContext";
 import { PRODUCTS, type Product } from "@/data/products";
 import MiniCart from "@/components/shop/MiniCart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const currency = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
 const CartPage = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const { items, total, updateQty, removeItem, clear } = useCart();
 
   useEffect(() => {
@@ -39,9 +40,9 @@ const CartPage = () => {
     }
   }, []);
 
-  const handleCheckout = () => {
-    toast.success("Proceeding to checkout (demo)");
-  };
+const handleCheckout = () => {
+  navigate("/checkout");
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
