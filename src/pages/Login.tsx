@@ -30,11 +30,20 @@ const Login = () => {
         });
         navigate("/dashboard");
       } else {
-        toast({
-          title: "Login Failed",
-          description: result.message,
-          variant: "destructive",
-        });
+        // Check if it's an email verification issue
+        if (result.message.includes('verify your email')) {
+          toast({
+            title: "Email Verification Required",
+            description: result.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Login Failed",
+            description: result.message,
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       toast({

@@ -14,6 +14,9 @@ import Profile from "./pages/Profile";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import EmailVerification from "./pages/EmailVerification";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,12 +47,18 @@ const AppContent = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<Dashboard />} />
           <Route path="/register" element={<Dashboard />} />
+          <Route path="/forgot-password" element={<Dashboard />} />
+          <Route path="/reset-password" element={<Dashboard />} />
+          <Route path="/verify-email" element={<Dashboard />} />
         </>
       ) : (
         <>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-email" element={<EmailVerification />} />
           <Route path="/dashboard" element={<Login />} />
           <Route path="/profile" element={<Login />} />
           <Route path="/shop" element={<Login />} />

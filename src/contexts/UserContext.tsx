@@ -24,6 +24,7 @@ interface UserContextType {
   isInitialized: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   register: (userData: any) => Promise<{ success: boolean; message: string }>;
+  resendVerification: (email: string) => Promise<{ success: boolean; message: string }>;
   logout: () => Promise<void>;
 }
 
@@ -110,7 +111,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: userData.email,
         password: userData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`,
+          emailRedirectTo: `${window.location.origin}/verify-email`,
           data: {
             full_name: `${userData.firstName} ${userData.lastName}`,
             phone: userData.phone,
@@ -140,6 +141,30 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.error('Registration error:', error);
       return { success: false, message: 'An unexpected error occurred during registration' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendVerification = async (email: string) => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/verify-email`
+        }
+      });
+
+      if (error) {
+        return { success: false, message: error.message };
+      }
+
+      return { success: true, message: 'Verification email sent! Please check your inbox.' };
+    } catch (error) {
+      console.error('Resend verification error:', error);
+      return { success: false, message: 'Failed to resend verification email' };
     } finally {
       setLoading(false);
     }
@@ -211,6 +236,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       isInitialized,
       login,
       register,
+      resendVerification,
       logout
     }}>
       {children}
