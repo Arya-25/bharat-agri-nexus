@@ -6,11 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import { PRODUCTS, type Product } from "@/data/products";
+import { ProductCard } from "@/components/shop/ProductCard";
+import { MiniCart } from "@/components/shop/MiniCart";
 
 import tomatoIcon from "@/assets/tomato-icon.png";
 import wheatIcon from "@/assets/wheat-icon.png";
 import appleIcon from "@/assets/apple-icon.png";
-import { Link } from "react-router-dom";
 
 // Product data moved to src/data/products.ts
 
