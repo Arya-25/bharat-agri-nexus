@@ -18,19 +18,22 @@ const ResetPassword = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if we have the required tokens for password reset
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    
-    if (!accessToken || !refreshToken) {
-      toast({
-        title: "Invalid Reset Link",
-        description: "The password reset link is invalid or has expired.",
-        variant: "destructive",
-      });
-      navigate("/forgot-password");
-    }
-  }, [searchParams, navigate, toast]);
+    const checkRecovery = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const hash = window.location.hash || "";
+      const isRecovery = hash.includes("type=recovery") || hash.includes("access_token");
+      
+      if (!session && !isRecovery) {
+        toast({
+          title: "Invalid Reset Link",
+          description: "The password reset link is invalid or has expired.",
+          variant: "destructive",
+        });
+        navigate("/forgot-password");
+      }
+    };
+    checkRecovery();
+  }, [navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
