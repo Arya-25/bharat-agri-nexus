@@ -72,9 +72,10 @@ const ResetPassword = () => {
       } else {
         toast({
           title: "Password Updated",
-          description: "Your password has been successfully updated. You can now login with your new password.",
+          description: "Your password has been successfully updated. Please log in again from the home page.",
         });
-        navigate("/login");
+        await supabase.auth.signOut();
+        navigate("/");
       }
     } catch (error) {
       toast({
