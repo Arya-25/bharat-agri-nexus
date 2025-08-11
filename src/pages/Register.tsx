@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Leaf, Mail, Lock, User, Building2, Phone } from "lucide-react";
+import { Eye, EyeOff, Leaf, Mail, Lock, User, Building2, Phone, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,11 +71,29 @@ const Register = () => {
 
       if (result.success) {
         toast({
-          title: "Registration Successful",
-          description: "Please check your email and click the verification link before logging in.",
+          description: (
+            <div className="animate-enter">
+              <div className="rounded-xl overflow-hidden">
+                <div className="bg-primary text-primary-foreground flex flex-col items-center justify-center py-6">
+                  <div className="w-14 h-14 rounded-full bg-primary-foreground/20 flex items-center justify-center shadow-inner">
+                    <CheckCircle className="h-8 w-8" />
+                  </div>
+                  <div className="mt-3 text-[10px] tracking-widest font-semibold uppercase opacity-90">Success</div>
+                </div>
+                <div className="bg-card p-5 text-center">
+                  <p className="text-muted-foreground mb-4">
+                    Congratulations, your account has been successfully created.
+                  </p>
+                  <Button size="sm" className="hover-scale" onClick={() => navigate("/login")}>
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ),
         });
 
-        // Redirect to login page instead of dashboard
+        // Redirect to login page after short delay
         setTimeout(() => {
           navigate("/login");
         }, 2000);

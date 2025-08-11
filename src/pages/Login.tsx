@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Leaf, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Leaf, Mail, Lock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,8 +25,21 @@ const Login = () => {
       
       if (result.success) {
         toast({
-          title: "Login Successful",
-          description: result.message,
+          description: (
+            <div className="animate-enter">
+              <div className="rounded-xl overflow-hidden">
+                <div className="bg-primary text-primary-foreground flex flex-col items-center justify-center py-6">
+                  <div className="w-14 h-14 rounded-full bg-primary-foreground/20 flex items-center justify-center shadow-inner">
+                    <CheckCircle className="h-8 w-8" />
+                  </div>
+                  <div className="mt-3 text-[10px] tracking-widest font-semibold uppercase opacity-90">Login Success</div>
+                </div>
+                <div className="bg-card p-5 text-center">
+                  <p className="text-muted-foreground">You're now signed in. Redirecting to your dashboard...</p>
+                </div>
+              </div>
+            </div>
+          ),
         });
         navigate("/dashboard");
       } else {
