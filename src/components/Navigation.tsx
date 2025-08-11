@@ -1,19 +1,34 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Leaf, User, LogOut } from "lucide-react";
+import { Menu, X, Leaf, User, LogOut, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
+import { useToast } from "@/hooks/use-toast";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isLoggedIn, logout } = useUser();
-
-  const handleLogout = () => {
-    logout();
+  const { toast } = useToast();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
+    toast({
+      description: (
+        <div className="animate-enter">
+          <div className="rounded-xl overflow-hidden">
+            <div className="bg-primary text-primary-foreground flex flex-col items-center justify-center py-6">
+              <div className="w-14 h-14 rounded-full bg-primary-foreground/20 flex items-center justify-center shadow-inner">
+                <CheckCircle className="h-8 w-8" />
+              </div>
+              <div className="mt-3 text-[10px] tracking-widest font-semibold uppercase opacity-90">Logout Success</div>
+            </div>
+          </div>
+        </div>
+      ),
+    });
   };
 
   const scrollToSection = (sectionId: string) => {

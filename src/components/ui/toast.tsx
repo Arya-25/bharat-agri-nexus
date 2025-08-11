@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-1/2 left-1/2 z-[100] flex max-h-screen w-full max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-2 p-4",
+      "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full max-w-md flex-col gap-2 p-4 sm:bottom-6 sm:right-6",
       className
     )}
     {...props}
@@ -27,9 +27,9 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-primary/20 bg-gradient-to-br from-card to-card/80 text-card-foreground shadow-primary/10",
+        default: "border-primary/30 ring-1 ring-primary/10 bg-gradient-to-br from-primary/10 via-card to-card/90 text-card-foreground shadow-primary/20",
         destructive:
-          "destructive group border-destructive/30 bg-gradient-to-br from-destructive/10 to-destructive/5 text-destructive-foreground shadow-destructive/20",
+          "destructive group border-destructive/40 ring-1 ring-destructive/20 bg-gradient-to-br from-destructive/15 to-destructive/5 text-destructive-foreground shadow-destructive/30",
       },
     },
     defaultVariants: {

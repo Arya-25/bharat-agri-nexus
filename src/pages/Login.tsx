@@ -34,9 +34,6 @@ const Login = () => {
                   </div>
                   <div className="mt-3 text-[10px] tracking-widest font-semibold uppercase opacity-90">Login Success</div>
                 </div>
-                <div className="bg-card p-5 text-center">
-                  <p className="text-muted-foreground">You're now signed in. Redirecting to your dashboard...</p>
-                </div>
               </div>
             </div>
           ),
